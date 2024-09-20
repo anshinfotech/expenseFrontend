@@ -9,7 +9,7 @@ import {
   GET_EXPENSE_REQUEST,
   GET_EXPENSE_SUCCESS,
 } from "../constants/expense";
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://expensebackend-e88m.onrender.com";
 axios.defaults.withCredentials = true;
 
 const addExpenseAction = (formData) => async (dispatch) => {

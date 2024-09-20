@@ -17,7 +17,7 @@ import {
   REGISTER_STUDENT_SUCCESS,
 } from "../constants/admin";
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://expensebackend-e88m.onrender.com";
 axios.defaults.withCredentials = true;
 
 const loginAdminAction = (userData, navigate) => async (dispatch) => {

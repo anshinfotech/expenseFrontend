@@ -11,7 +11,7 @@ import {
   GET_INCOME_REQUEST,
   GET_INCOME_SUCCESS,
 } from "../constants/income";
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://expensebackend-e88m.onrender.com";
 axios.defaults.withCredentials = true;
 
 const addIncomeAction = (formData) => async (dispatch) => {
