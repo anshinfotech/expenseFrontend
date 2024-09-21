@@ -30,6 +30,10 @@ function App() {
     dispatch(adminAuthenticationAction());
   }, []);
 
+  useEffect(()=>{
+    document.title="Home"
+  },[])
+
   return (
     <div className="font-roboto bg-zinc-100">
       <BrowserRouter>
