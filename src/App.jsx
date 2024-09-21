@@ -30,20 +30,18 @@ function App() {
     dispatch(adminAuthenticationAction());
   }, []);
 
-  useEffect(()=>{
-    document.location="/admin/login"
-  },[])
+
 
   return (
     <div className="font-roboto bg-zinc-100">
       <BrowserRouter>
         <Routes>
           {/* Admin Routes */}
+          <Route path="/" element={<Login />}></Route>
           <Route
             path="/admin/dashboard"
             element={Admin && Admin.token ? <Dashboard /> : <PageNotFound />}
           ></Route>
-          <Route path="/admin/login" element={<Login />}></Route>
           <Route
             path="/admin/finance_management"
             element={Admin && Admin.token ? <FinanceMG /> : <PageNotFound />}

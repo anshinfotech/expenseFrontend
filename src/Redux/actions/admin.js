@@ -78,7 +78,7 @@ const logoutAdminAction = (navigate) => async (dispatch) => {
         type: LOGOUT_ADMIN_SUCCESS,
         payload: response.data.message,
       });
-      navigate("/admin/login");
+      navigate("/");
     } else {
       dispatch({
         type: LOGOUT_ADMIN_FAILURE,
