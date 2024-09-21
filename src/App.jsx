@@ -31,7 +31,7 @@ function App() {
   }, []);
 
   useEffect(()=>{
-    document.location="/admin/dashboard"
+    document.location="/admin/login"
   },[])
 
   return (
