@@ -12,6 +12,8 @@ import {
   EMPTY_SUCCESS_MESSAGE,
 } from "../../Redux/constants/expense";
 import moment from "moment";
+import ExpenseOverview from "./ExpenseOverview";
+import CustomLineChart from "./CustomLineChart";
 
 function ViewExpenses() {
   const [expenseArray, setExpenseArray] = useState([]); //it is used to store the filtered data
@@ -90,40 +92,74 @@ function ViewExpenses() {
     setExpenseArray(filterData);
   };
 
+  const clearFilters = () => {
+    setFilterPM("");
+    setFilterPT("");
+    setDateFilter("");
+    setTimeFilter("");
+    setExpenseArray(originalExArray);
+  };
+
   return (
     <>
       <Toaster richColors position="bottom-right"></Toaster>
       <Sidebar />
-      <div className="w-100 h-screen ps-96 pt-5 pe-5 overflow-scroll">
-        <div className="flex justify-between">
-          <h1 className="text-4xl font-bold">Expenses History</h1>
+      <div className="w-100 h-screen ps-96 pt-5 pe-5 overflow-scroll bg-gradient-to-br from-emerald-50 via-white to-green-50">
+        {/* Header */}
+        <div className="flex justify-between mb-8">
           <div>
+            <h1 className="text-4xl font-bold text-gray-900">Expenses History</h1>
+            <p className="text-gray-600 mt-2">Track and manage your financial transactions</p>
+          </div>
+          <div className="flex items-center gap-3">
             <Link
               to="/admin/finance_management/add_expense"
-              className="px-4 py-2 text-lg font-bold hover:underline"
+              className="px-4 py-2 text-lg font-bold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors duration-200"
             >
               Add new Entry
             </Link>
             <Link
               to="/admin/finance_management"
-              className="px-4 py-2 text-lg font-bold hover:underline"
+              className="px-4 py-2 text-lg font-bold text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
             >
               Go Back
             </Link>
-            <button className="px-4 py-2 text-lg font-bold hover:underline">
-              Delete All{"  "}
-              <i className="fa-solid fa-trash"></i>
+            <button className="px-4 py-2 text-lg font-bold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200">
+              Delete All <i className="fa-solid fa-trash ml-2"></i>
             </button>
           </div>
         </div>
-        <div className="filter_container w-full mt-10 flex justify-between">
-          <div className="flex gap-4">
+
+        {/* Expense Overview Cards */}
+        <ExpenseOverview 
+          expenses={expenseArray} 
+          onAddExpense={() => console.log('Add expense clicked')} 
+        />
+
+        {/* Charts Section */}
+        <div className="mb-8">
+          <CustomLineChart expenses={expenseArray} />
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">Filter Expenses</h3>
+            <button
+              onClick={clearFilters}
+              className="text-sm text-gray-500 hover:text-gray-700 underline"
+            >
+              Clear All
+            </button>
+          </div>
+          
+          <div className="flex gap-4 mb-4">
             <select
               value={filterPM}
               onChange={(e) => {
                 setFilterPM(e.target.value);
               }}
-              className="px-4 py-2 w-52 border-2 border-slate-900 rounded-md font-medium text-xl"
+              className="px-4 py-2 w-52 bg-white/80 border border-gray-200 rounded-xl font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors duration-200"
             >
               <option value="">Payment Method</option>
               <option value="">All</option>
@@ -139,7 +175,7 @@ function ViewExpenses() {
               onChange={(e) => {
                 setFilterPT(e.target.value);
               }}
-              className="px-4 py-2 w-52 border-2 border-slate-900 rounded-md font-medium text-xl"
+              className="px-4 py-2 w-52 bg-white/80 border border-gray-200 rounded-xl font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors duration-200"
             >
               <option value="">Payment Type</option>
               <option value="">All</option>
@@ -151,126 +187,137 @@ function ViewExpenses() {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="px-4 py-2 w-52 border-2 border-slate-900 rounded-md font-medium text-xl"
+              className="px-4 py-2 w-52 bg-white/80 border border-gray-200 rounded-xl font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors duration-200"
             />
             <input
               type="time"
               value={timeFilter}
               onChange={(e) => setTimeFilter(e.target.value)}
-              className="px-4 py-2 w-52 border-2 border-slate-900 rounded-md font-medium text-xl"
+              className="px-4 py-2 w-52 bg-white/80 border border-gray-200 rounded-xl font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors duration-200"
             />
+            <button
+              onClick={handleFilterDataOperation}
+              className="px-6 py-2 rounded-xl text-lg text-white font-bold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <i className="fa-solid fa-magnifying-glass mr-2"></i>Search
+            </button>
           </div>
-          <button
-            onClick={handleFilterDataOperation}
-            className="px-4 py-2 rounded-md text-lg text-white font-bold bg-emerald-600 hover:underline"
-          >
-            <i className="fa-solid fa-magnifying-glass mr-2"></i>Search
-          </button>
         </div>
-        <table className="w-full mb-5">
-          <thead className="w-full">
-            <tr className="grid grid-cols-5 gap-3 px-4 bg-slate-900 rounded-md mt-4 py-4">
-              <td className="text-xl text-white font-bold">
-                Amount{"(in INR)"}
-              </td>
-              <td className="text-xl text-white font-bold">
-                Payment Method
-              </td>
-              <td className="text-xl text-white font-bold">Payment Type</td>
-              <td className="text-xl text-white font-bold">View Details</td>
-              <td className="text-xl text-white font-bold">Remove Data</td>
-            </tr>
-          </thead>
-        </table>
 
-        {isLoading ? (
-          <p className="text-3xl text-center font-bold mt-10">
-            Fetching Data.....
-          </p>
-        ) : expenseArray.length > 0 ? (
-          expenseArray.map((item) => {
-            return (
-              <table className="w-full" key={item._id}>
-                <thead className="w-full">
-                  <tr className="grid grid-cols-5 gap-3 px-4 bg-slate-200 items-center rounded-md mt-4 py-4">
-                    <td className="text-xl text-slate-900 font-bold">
-                      Rs.{item.expense}/-
-                    </td>
-                    <td className="text-xl text-slate-900 font-bold">
-                      {item.paymentMethod}
-                    </td>
-                    <td className="text-xl text-slate-900 font-bold">
-                      {item.paymentType}
-                    </td>
-                    <td className="text-xl text-white font-bold mx-auto">
-                      <button
-                        onClick={() => viewExpenseDetails(item)}
-                        className="px-4 py-2 rounded-md text-lg font-bold bg-emerald-600 hover:underline"
-                      >
-                        <i className="fa-solid fa-eye mr-2"></i>View
-                      </button>
-                    </td>
-                    <td className="text-xl text-white font-bold mx-auto">
-                      <button
-                        onClick={() => handleDeleteExpense(item._id)}
-                        className="px-4 py-2 rounded-md text-lg font-bold bg-red-600 hover:underline"
-                      >
-                        <i className="fa-solid fa-trash mr-2"></i>Remove
-                      </button>
-                    </td>
+        {/* Expenses Table */}
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg overflow-hidden mb-8">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800">Expense History</h3>
+            <p className="text-sm text-gray-600 mt-1">
+              {expenseArray.length} {expenseArray.length === 1 ? 'transaction' : 'transactions'} found
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+              <span className="ml-3 text-lg font-medium text-gray-700">Fetching Data.....</span>
+            </div>
+          ) : expenseArray.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-emerald-600 text-left">
+                    <th className="px-6 py-4 text-xl text-white font-bold">Amount (in INR)</th>
+                    <th className="px-6 py-4 text-xl text-white font-bold">Payment Method</th>
+                    <th className="px-6 py-4 text-xl text-white font-bold">Payment Type</th>
+                    <th className="px-6 py-4 text-xl text-white font-bold">View Details</th>
+                    <th className="px-6 py-4 text-xl text-white font-bold">Remove Data</th>
                   </tr>
                 </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {expenseArray.map((item) => (
+                    <tr key={item._id} className="hover:bg-emerald-50/50 transition-colors duration-200">
+                      <td className="px-6 py-4 text-xl text-slate-900 font-bold">
+                        Rs.{item.expense}/-
+                      </td>
+                      <td className="px-6 py-4 text-xl text-slate-900 font-bold">
+                        {item.paymentMethod}
+                      </td>
+                      <td className="px-6 py-4 text-xl text-slate-900 font-bold">
+                        {item.paymentType}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => viewExpenseDetails(item)}
+                          className="px-4 py-2 rounded-md text-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-200"
+                        >
+                          <i className="fa-solid fa-eye mr-2"></i>View
+                        </button>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleDeleteExpense(item._id)}
+                          className="px-4 py-2 rounded-md text-lg font-bold bg-red-600 hover:bg-red-700 text-white transition-colors duration-200"
+                        >
+                          <i className="fa-solid fa-trash mr-2"></i>Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
-            );
-          })
-        ) : (
-          <p className="text-3xl text-center font-bold mt-10">No Data!</p>
-        )}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-3xl text-center font-bold mt-10">No Data!</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Detail Modal */}
       <div
         className={`${
           isDetailCard ? "block" : "hidden"
-        } absolute w-100 h-screen flex items-center justify-center z-50 top-0 left-0 right-0 bottom-0`}
+        } fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50`}
       >
-        <div className="details-card w-1/2 h-2/3 bg-white shadow-2xl shadow-slate-700">
-          <p
-            className="text-right px-4 pt-2 cursor-pointer"
-            onClick={() => setIsDetailCard(false)}
-          >
-            <i className="fa-solid fa-xmark text-3xl font-bold"></i>
-          </p>
-          <h2 className="my-2 text-3xl font-bold text-center">
-            Expense Details
-          </h2>
-          <div className="flex flex-col gap-3 mt-12 px-16">
-            <div className="flex justify-between">
-              <span className="text-xl font-bold">Payment Method</span>
-              <span className="text-xl underline">
-                {expDetail.paymentMethod}
-              </span>
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Expense Details</h2>
+              <button
+                onClick={() => setIsDetailCard(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              >
+                <i className="fa-solid fa-xmark text-2xl font-bold"></i>
+              </button>
             </div>
-            <div className="flex justify-between">
-              <span className="text-xl font-bold">Payment Type</span>
-              <span className="text-xl underline">{expDetail.paymentType}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-xl font-bold">Payment Date</span>
-              <span className="text-xl underline">
-                {moment(expDetail.paymentDate).format(
-                   "DD/MM/YYYY , dddd , hh:mm a"
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-xl font-bold">Description of payment</span>
-              <span className="text-xl underline">{expDetail.description}</span>
-            </div>
-            <hr />
-            <div className="flex justify-between">
-              <span className="text-xl font-bold">Total amount</span>
-              <span className="text-xl underline">
-                Rs.{expDetail.expense}/-
-              </span>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                <span className="font-medium text-gray-600">Payment Method</span>
+                <span className="font-semibold text-gray-900">{expDetail.paymentMethod}</span>
+              </div>
+
+              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                <span className="font-medium text-gray-600">Payment Type</span>
+                <span className="font-semibold text-gray-900">{expDetail.paymentType}</span>
+              </div>
+
+              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                <span className="font-medium text-gray-600">Payment Date</span>
+                <span className="font-semibold text-gray-900">
+                  {expDetail.paymentDate && moment(expDetail.paymentDate).format("DD/MM/YYYY , dddd , hh:mm a")}
+                </span>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <span className="font-medium text-gray-600 block mb-2">Description of payment</span>
+                <p className="text-gray-900">{expDetail.description}</p>
+              </div>
+
+              <div className="flex justify-between items-center p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border-2 border-emerald-200">
+                <span className="font-bold text-gray-800">Total amount</span>
+                <span className="text-2xl font-bold text-emerald-600">
+                  Rs.{expDetail.expense}/-
+                </span>
+              </div>
             </div>
           </div>
         </div>

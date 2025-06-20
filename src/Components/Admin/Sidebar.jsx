@@ -9,24 +9,24 @@ function Sidebar() {
       path: "/admin/dashboard",
       icon: "fa-solid fa-house",
     },
-    // {
-    //   id: 2,
-    //   title: "Staff Management",
-    //   path: "/admin/staff_management",
-    //   icon: "fa-solid fa-users",
-    // },
+    {
+      id: 2,
+      title: "Staff Management",
+      path: "/admin/staff_management",
+      icon: "fa-solid fa-users",
+    },
     {
       id: 3,
       title: "Finance Management",
       path: "/admin/finance_management",
       icon: "fa-solid fa-money-bill",
     },
-    // {
-    //   id: 4,
-    //   title: "Batch Management",
-    //   path: "/admin/batch_management",
-    //   icon: "fa-solid fa-people-group",
-    // },
+    {
+      id: 4,
+      title: "Batch Management",
+      path: "/admin/batch_management",
+      icon: "fa-solid fa-people-group",
+    },
     {
       id: 5,
       title: "Logout account",

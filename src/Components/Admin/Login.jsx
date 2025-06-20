@@ -7,6 +7,7 @@ import {
   EMPTY_SUCCESS_MESSAGE,
 } from "../../Redux/constants/admin";
 import {useNavigate} from 'react-router-dom';
+import Input from "./Input";
 
 function Login() {
   const [userData, setUserData] = useState({
@@ -56,24 +57,10 @@ function Login() {
             className="flex flex-col gap-4 w-full px-12 mt-12"
             onSubmit={handleFormSubmit}
           >
-            <input
-              type="text"
-              value={userData.email}
-              onChange={(e) =>
-                setUserData({ ...userData, email: e.target.value })
-              }
-              placeholder="Enter email"
-              className="text-lg border px-4 py-2"
-            />
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={userData.password}
-              onChange={(e) =>
-                setUserData({ ...userData, password: e.target.value })
-              }
-              className="text-lg border px-4 py-2"
-            />
+            
+
+            <Input label="Email" type="text" placeholder="Enter email" value={userData.email} onChange={(e) => setUserData({ ...userData, email: e.target.value })} />
+            <Input label="Password" type="password" placeholder="Enter password" value={userData.password} onChange={(e) => setUserData({ ...userData, password: e.target.value })} />
             <button className="text-lg text-white bg-emerald-600 py-2 font-bold hover:bg-emerald-400">
               {isLoading ? "Loading...." : "Login"}
             </button>

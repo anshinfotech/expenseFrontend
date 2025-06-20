@@ -1,96 +1,185 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import { Link } from "react-router-dom";
+import {
+  EMPTY_FAILURE_MESSAGE,
+  EMPTY_SUCCESS_MESSAGE,
+} from "../../Redux/constants/admin";
+import {
+  fetchAllBatchesAction,
+  deleteBatchAction,
+} from "../../Redux/actions/admin";
+
+import { FaTrash } from "react-icons/fa";
 
 function ViewBatches() {
-  const [isDetailCard, setIsDetailCard] = useState(false);
+  const [batchArray, setBatchArray] = useState([]);
+  const [originalArray, setOriginalArray] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [batchToDelete, setBatchToDelete] = useState(null);
 
-  const classes = [
-    {
-      id: 1,
-      class: "Web Development",
-      batch: "Morning 9-11",
-      duration: "4 Weeks",
-      Mentor: "John Wick",
-      image:
-        "https://media.geeksforgeeks.org/wp-content/uploads/20231205165904/web-development-image.webp",
-    },
-    {
-      id: 2,
-      class: "Computer Vision",
-      batch: "Morning 10-12",
-      duration: "6 Weeks",
-      Mentor: "Kuldeep",
-      image:
-        "https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp",
-    },
-    {
-      id: 3,
-      class: "Digital Marketing",
-      batch: "Afternoon 1-2",
-      duration: "6 Months",
-      Mentor: "Shristy Sharma",
-      image: "https://etimg.etb2bimg.com/photo/89866384.cms",
-    },
-    {
-      id: 4,
-      class: "Cyber Security",
-      batch: "Evening 4-6",
-      duration: "6 Months",
-      Mentor: "Jaspreet Singh",
-      image:
-        "https://media.licdn.com/dms/image/v2/D5612AQE0r5WC8r0HQg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1657711469335?e=2147483647&v=beta&t=AA7ierE6T8n-g7EDphWBu9qKdqcsXkOXo4tj7xg146s",
-    },
-  ];
+  const isLoading = useSelector((state) => state.AdminGS.isLoading);
+  const failure = useSelector((state) => state.AdminGS.failure);
+  const success = useSelector((state) => state.AdminGS.success);
+  const batches = useSelector((state) => state.AdminGS.Batch);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllBatchesAction());
+  }, []);
+
+  useEffect(() => {
+    if (batches && batches.length > 0) {
+      setBatchArray(batches);
+      setOriginalArray(batches);
+    }
+  }, [batches]);
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success);
+      dispatch({ type: EMPTY_SUCCESS_MESSAGE });
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (failure) {
+      toast.error(failure);
+      dispatch({ type: EMPTY_FAILURE_MESSAGE });
+    }
+  }, [failure]);
+
+  const handleSearch = () => {
+    const term = searchTerm.toLowerCase();
+    const filtered = originalArray.filter(
+      (item) =>
+        item.subject.toLowerCase().includes(term) ||
+        (item.mentor && item.mentor.toLowerCase().includes(term))
+    );
+    setBatchArray(filtered);
+  };
+
+  const handleDeleteClick = (id) => {
+    setBatchToDelete(id);
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    dispatch(deleteBatchAction(batchToDelete));
+    setShowConfirm(false);
+    setBatchToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    setShowConfirm(false);
+    setBatchToDelete(null);
+  };
 
   return (
     <>
-      <Toaster richColors position="bottom-right"></Toaster>
+      <Toaster richColors position="bottom-right" />
       <Sidebar />
-      <div className="w-100 h-screen ps-96 pt-5 pe-5 overflow-scroll">
-        <div className="flex justify-between">
+
+      <div className="w-full h-screen ps-96 pt-5 pe-5 overflow-scroll">
+        <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold">Classes Schedule</h1>
-          <div>
-            <Link
-              to="/admin/batch_management"
-              className="px-4 py-2 text-lg font-bold hover:underline"
-            >
-              Go Back
-            </Link>
-          </div>
+          <Link
+            to="/admin/batch_management"
+            className="px-4 py-2 text-lg font-bold hover:underline"
+          >
+            Go Back
+          </Link>
         </div>
 
+        {/* Search Box */}
+        <div className="flex gap-2 mt-6">
+          <input
+            type="text"
+            placeholder="Search by subject or teacher"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-80 px-4 py-2 border border-gray-400 rounded-lg"
+          />
+          <button
+            onClick={handleSearch}
+            className="px-6 py-2 rounded-xl text-lg text-white font-bold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Search
+          </button>
+        </div>
+
+        {/* Batch Cards */}
         <div className="grid grid-cols-3 mt-10">
-          {classes.map((item) => {
-            return (
-              <Link>
-                <div className="w-80 h-80 bg-white mx-auto my-5">
-                  <div className="image_con w-full h-2/3">
-                    <img
-                      src={item.image}
-                      alt="Image Not Found"
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div className="content-body h-1/3 px-4 flex flex-col gap-1 pt-2">
+          {isLoading ? (
+            <p className="text-3xl text-center font-bold mt-10">
+              Fetching Data.....
+            </p>
+          ) : batchArray.length > 0 ? (
+            batchArray.map((item, index) => (
+              <div
+                key={index}
+                className="relative w-80 h-52 bg-white mx-auto my-5 shadow-lg rounded-xl p-4"
+              >
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDeleteClick(item._id)}
+                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl"
+                  title="Delete"
+                >
+                  <FaTrash />
+                </button>
+
+                <div className="content-body h-full flex flex-col justify-center gap-2">
+                  <span className="text-xl font-bold text-gray-800">
+                    {item.subject}
+                  </span>
+                  <span>
+                    <b>Batch :</b> {item.batch}
+                  </span>
+                  <span>
+                    <b>Duration :</b> {item.duration}
+                  </span>
+                  {item.mentor && (
                     <span>
-                      <b>Class :</b> {item.class}
+                      <b>Mentor :</b> {item.mentor}
                     </span>
-                    <span>
-                      <b>Batch :</b> {item.batch}
-                    </span>
-                    <span>
-                      <b>Duration :</b> {item.duration}
-                    </span>
-                  </div>
+                  )}
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+            ))
+          ) : (
+            <p className="text-3xl text-center font-bold mt-10">No Data Found</p>
+          )}
         </div>
       </div>
+
+      {/* Delete Confirmation Popup */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-96">
+            <h2 className="text-xl font-semibold mb-4">
+              Are you sure you want to delete this batch?
+            </h2>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={confirmDelete}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
