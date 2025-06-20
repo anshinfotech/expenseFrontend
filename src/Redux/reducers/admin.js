@@ -17,6 +17,15 @@ import {
   REGISTER_STUDENT_FAILURE,
   REGISTER_STUDENT_SUCCESS,
   REGISTER_STUDENT_REQUEST,
+  ADD_BATCH_FAILURE,
+  ADD_BATCH_REQUEST,
+  ADD_BATCH_SUCCESS,
+  FETCH_BATCH_FAILURE,
+  FETCH_BATCH_REQUEST,
+  FETCH_BATCH_SUCCESS,
+  DELETE_BATCH_FAILURE,
+  DELETE_BATCH_REQUEST,
+  DELETE_BATCH_SUCCESS,
 } from "../constants/admin";
 
 const adminInitialState = {
@@ -147,6 +156,67 @@ const adminReducer = (state = adminInitialState, action) => {
         isLoading : false,
         failure : action.payload,
       }
+    case ADD_BATCH_REQUEST:
+      return {
+        ...state,
+        isLoading : true,
+      }
+
+    case ADD_BATCH_SUCCESS:
+      return {
+        ...state , 
+        isLoading : false,
+        success : action.payload,
+      }
+
+    case ADD_BATCH_FAILURE:
+      return {
+        ...state,
+        isLoading : false,
+        failure : action.payload,
+      }
+
+      case FETCH_BATCH_REQUEST:
+      return {
+        ...state,
+        isLoading : true,
+      }
+
+    case FETCH_BATCH_SUCCESS:
+      return {
+        ...state,
+        isLoading : false,
+        success : action.payload.message,
+        Batch : action.payload.Data,
+      } 
+
+    case FETCH_BATCH_FAILURE:
+      return {
+        ...state,
+        isLoading : false,
+        failure : action.payload,
+      }
+
+    case DELETE_BATCH_REQUEST:
+      return {
+        ...state,
+        isLoading : true,
+      }
+
+    case DELETE_BATCH_SUCCESS:
+      return {
+        ...state,
+        isLoading : false,
+        success : action.payload,
+      }
+
+    case DELETE_BATCH_FAILURE:
+      return {
+        ...state,
+        isLoading : false,
+        failure : action.payload,
+    }
+    
 
     default:
       return state;

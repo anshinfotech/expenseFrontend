@@ -15,9 +15,17 @@ import {
   REGISTER_STUDENT_FAILURE,
   REGISTER_STUDENT_REQUEST,
   REGISTER_STUDENT_SUCCESS,
+  ADD_BATCH_FAILURE,
+  ADD_BATCH_REQUEST,
+  ADD_BATCH_SUCCESS,
+  FETCH_BATCH_FAILURE,
+  FETCH_BATCH_REQUEST,
+  FETCH_BATCH_SUCCESS,
+  DELETE_BATCH_SUCCESS,
+  DELETE_BATCH_FAILURE,
 } from "../constants/admin";
 import axios from "axios";
-axios.defaults.baseURL = "https://expensebackend-e88m.onrender.com";
+axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 const loginAdminAction = (userData, navigate) => async (dispatch) => {
@@ -39,6 +47,7 @@ const loginAdminAction = (userData, navigate) => async (dispatch) => {
     }
   } catch (error) {
     const message = error.response.data.message;
+    console.log(message);
     dispatch({
       type: LOGIN_ADMIN_FAILURE,
       payload: message,
@@ -167,6 +176,81 @@ const registerStudentAction = (formData) => async (dispatch) => {
   }
 };
 
+
+
+const  addBatchAction = (formData) => async (dispatch) => {
+  dispatch({ type: ADD_BATCH_REQUEST });
+  try {
+    const response = await axios.post("/admin/add_batch", formData);
+
+    if (response.data.success) {
+      dispatch({
+        type: ADD_BATCH_SUCCESS,
+        payload: response.data.message,
+      });
+    } else {
+      dispatch({ type: ADD_BATCH_FAILURE, payload: response.data.message });
+    }
+  } catch (error) {
+    dispatch({
+      type: ADD_BATCH_FAILURE,
+      payload: error.response.data.message,
+    });
+  }
+};  
+
+const fetchAllBatchesAction = () => async (dispatch) => {
+  dispatch({ type: FETCH_BATCH_REQUEST });
+  try {
+    const response = await axios.get("/admin/get_all_batches");
+
+    if (response.data.success) {
+      dispatch({
+        type: FETCH_BATCH_SUCCESS,
+        payload: {
+          Data: response.data.Data,
+          message: response.data.message,
+        },
+      });
+    } else {
+      dispatch({
+        type: FETCH_BATCH_FAILURE,
+        payload: response.data.message,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: FETCH_BATCH_FAILURE,
+      payload: error.response.data.message,
+    });
+  }
+};  
+
+const deleteBatchAction = (id) => async (dispatch) => {
+  try {
+    const response = await axios.delete(`/admin/delete_batch/${id}`);
+    if (response.data.success) {
+      dispatch({
+        type: DELETE_BATCH_SUCCESS,
+        payload: response.data.message,
+      });
+      dispatch(fetchAllBatchesAction()); // Refresh the batch list after deletion
+    } else {
+      dispatch({
+        type: DELETE_BATCH_FAILURE,
+        payload: response.data.message,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: FETCH_BATCH_FAILURE,
+      payload: error.response.data.message,
+    });
+  }
+};
+
 export {
   loginAdminAction,
   adminAuthenticationAction,
@@ -174,4 +258,7 @@ export {
   addStaffMembersAction,
   fetchAllStaffMembersAction,
   registerStudentAction,
+  addBatchAction,
+  fetchAllBatchesAction,
+  deleteBatchAction
 };

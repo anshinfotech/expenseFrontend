@@ -8,7 +8,8 @@ import ViewStaff from "./Components/Admin/ViewStaff";
 import Logout from "./Components/Admin/Logout";
 import AddExpense from "./Components/Admin/AddExpense";
 import ViewExpenses from "./Components/Admin/ViewExpenses";
-import Schedule from "./Components/Admin/Schedule";
+import AddBatches from "./Components/Admin/AddBatches";
+
 import FinanceMG from "./Components/Admin/FinanceMG";
 import StaffMG from "./Components/Admin/StaffMG";
 import BatchMG from "./Components/Admin/BatchMG";
@@ -80,7 +81,7 @@ function App() {
           ></Route>
           <Route
             path="/admin/batch_management/create_batch"
-            element={Admin && Admin.token ? <Schedule /> : <PageNotFound />}
+            element={Admin && Admin.token ? <AddBatches /> : <PageNotFound />}
           ></Route>
           <Route
             path="/admin/batch_management/view_batches"
@@ -92,7 +93,7 @@ function App() {
           ></Route>
           <Route
             path="/admin/schedule_classes"
-            element={Admin && Admin.token ? <Schedule /> : <PageNotFound />}
+            element={Admin && Admin.token ? <AddBatches /> : <PageNotFound />}
           ></Route>
           <Route
             path="/admin/logout"
